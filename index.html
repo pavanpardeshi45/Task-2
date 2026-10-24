@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewsApp - Dark Mode</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --surface: #f8fafc;
+      --text: #0f172a;
+      --secondary: #475569;
+      --primary: #2563eb;
+      --border: #e2e8f0;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0b1220;
+      --surface: #1e293b;
+      --text: #f8fafc;
+      --secondary: #cbd5e1;
+      --primary: #60a5fa;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .app {
+      max-width: 650px;
+      margin: auto;
+    }
+
+    header, .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    button, select {
+      font: inherit;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    button:focus-visible, select:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .category {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .card {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .meta {
+      color: var(--secondary);
+      font-size: 14px;
+    }
+
+    .article {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header>
+      <h1>NewsApp</h1>
+      <button id="themeToggle"
+              type="button"
+              aria-pressed="false">
+        🌙 Enable dark mode
+      </button>
+    </header>
+
+    <div class="toolbar">
+      <h2>Top Stories</h2>
+      <label for="themeSelect">Appearance:</label>
+      <select id="themeSelect">
+        <option value="system">System default</option>
+        <option value="light">Light mode</option>
+        <option value="dark">Dark mode</option>
+      </select>
+    </div>
+
+    <article class="card">
+      <p class="category">TECHNOLOGY</p>
+      <h2>New AI Features Transform the Digital World</h2>
+      <p class="meta">By NewsApp Team · 3 hours ago</p>
+      <p class="article">
+        Technology continues to evolve with new AI tools,
+        improved digital experiences, and stronger privacy
+        features. These innovations are changing how people
+        learn, work, and communicate.
+      </p>
+      <button type="button">Read full article →</button>
+    </article>
+  </main>
+
+  <script>
+    const root = document.documentElement;
+    const toggle = document.getElementById("themeToggle");
+    const select = document.getElementById("themeSelect");
+
+    const saved = localStorage.getItem("news-theme");
+    let preference = ["light", "dark", "system"].includes(saved)
+      ? saved
+      : "system";
+
+    const systemTheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
+
+    function applyTheme() {
+      const dark = preference === "dark" ||
+        (preference === "system" && systemTheme.matches);
+
+      root.dataset.theme = dark ? "dark" : "light";
+      toggle.textContent = dark
+        ? "☀️ Enable light mode"
+        : "🌙 Enable dark mode";
+      toggle.setAttribute("aria-pressed", String(dark));
+      select.value = preference;
+    }
+
+    toggle.addEventListener("click", () => {
+      preference = root.dataset.theme === "dark"
+        ? "light"
+        : "dark";
+
+      localStorage.setItem("news-theme", preference);
+      applyTheme();
+    });
+
+    select.addEventListener("change", () => {
+      preference = select.value;
+      localStorage.setItem("news-theme", preference);
+      applyTheme();
+    });
+
+    systemTheme.addEventListener("change", () => {
+      if (preference === "system") applyTheme();
+    });
+
+    applyTheme();
+  </script>
+</body>
+</html>
